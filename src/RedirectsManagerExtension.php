@@ -2,6 +2,7 @@
 
 namespace Bolt\Extension\Soapbox\RedirectsManager;
 
+use function array_fill;
 use Bolt\Application;
 use Bolt\Asset\File\JavaScript;
 use Bolt\Asset\File\Stylesheet;
@@ -27,6 +28,7 @@ use Tivie\HtaccessParser\Parser;
 use Tivie\HtaccessParser\Token\Block;
 use Tivie\HtaccessParser\Token\Comment;
 use Tivie\HtaccessParser\Token\Directive;
+use Tivie\HtaccessParser\Token\WhiteLine;
 
 /**
  * Redirects manager extension
@@ -307,10 +309,11 @@ class RedirectsManagerExtension extends SimpleExtension
 
         if (count(array_keys($redirects)) === 0) {
             $redirects = [
-                'start' => null,
-                'end'   => null,
-                'rules' => null,
-                'path'  => []
+                'start'     => null,
+                'end'       => null,
+                'rules'     => null,
+                'path'      => [],
+                'was_empty' => true
             ];
         }
 
@@ -318,7 +321,7 @@ class RedirectsManagerExtension extends SimpleExtension
             if ($rule instanceof Block && $rule->hasChildren()) {
                 $redirects = $this->findRedirects($rule->getIterator(), $redirects);
 
-                if (!is_null($redirects['rules'])) {
+                if (!is_null($redirects['start']) && !is_null($redirects['end'])) {
                     $redirects['path'][] = $k;
 
                     break;
@@ -342,7 +345,8 @@ class RedirectsManagerExtension extends SimpleExtension
             }
 
             if (!is_null($redirects['start']) && is_null($redirects['end'])) {
-                $redirects['rules'][] = $rule;
+                $redirects['rules'][]   = $rule;
+                $redirects['was_empty'] = false;
             }
         }
 
@@ -552,6 +556,10 @@ class RedirectsManagerExtension extends SimpleExtension
             }
         }
 
+        if (empty($redirects) || empty($redirects['rules'])) {
+            return true;
+        }
+
         return !!$this->saveToFile($redirects);
     }
 
@@ -570,17 +578,33 @@ class RedirectsManagerExtension extends SimpleExtension
             $path  = array_shift($paths);
 
             $this->parser->offsetSet($path, $this->setChildren($paths, $this->parser->offsetGet($path), $redirects));
-            $htaccess = $this->parser;
         } else {
-            $htaccess = $this->parser->splice($redirects['start'], $redirects['end'] + 1, $redirects['rules']);
+            // SBTODO: Fix this. Does not work when the Redirect Manager block is outside of any ifModule container within .htaccess!
+            /*foreach ($redirects['rules'] as $i => $r) {
+                if (!empty($r['delete'])) {
+                    $redirects['rules'][$i] = null;
+                    continue;
+                }
+
+                $redirects['rules'][$i] = $this->createRewriteRule($r);
+            }
+
+            $redirects['rules'] = array_filter($redirects['rules']);
+
+            $start = $this->parser->offsetGet($redirects['start']);
+            $end = $this->parser->offsetGet($redirects['end']);
+
+            $redirects['rules'] = array_merge([$start], $redirects['rules'], [$end]);
+
+            $this->parser->splice($redirects['start'], $redirects['end'] - $redirects['start'], $redirects['rules']);*/
         }
 
-        $test = $this->htaccess_file->fwrite((string) $htaccess);
+        $test = $this->htaccess_file->fwrite((string) $this->parser);
 
         if ($test) {
             $this->htaccess_file->ftruncate(0);
 
-            return file_put_contents($this->htaccess_file->getRealPath(), (string) $htaccess, LOCK_EX);
+            return file_put_contents($this->htaccess_file->getRealPath(), (string) $this->parser, LOCK_EX);
         }
 
         return false;
@@ -664,6 +688,10 @@ class RedirectsManagerExtension extends SimpleExtension
 
         if (count($redirects['rules']) > $i) {
             $remaining_rules = array_slice($redirects['rules'], $i, null, true);
+
+            if ($offset === 0) {
+                $offset = $redirects['start'];
+            }
 
             $offset++;
             $reset_offset   = $offset;
