@@ -1,0 +1,17 @@
+#--
+# Auth/permissions/menuitem/title
+#--
+menueditor.notallowed: "Loggade in användaren har inte de rätta rättigheterna att använda denna väg."
+menueditor.title: "Globala inställningar"
+menueditor.menuitem: "Globala inställningar"
+
+#--
+# Flash messages
+#--
+menueditor.flash.saved: "Inställningarna har sparats"
+menueditor.flash.error: "Inställningar kunde inte räddas, har vi återställt det till det senast kända gott skick."
+
+#--
+# Actions
+#--
+menueditor.actions.save: "Spara inställningar"

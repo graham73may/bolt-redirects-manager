@@ -1,0 +1,17 @@
+#--
+# Auth/permissions/menuitem/title
+#--
+menueditor.notallowed: "Angemeldeter Benutzer verfügt nicht über die nötigen Zugriffsrechte."
+menueditor.title: "Globale einstellungen"
+menueditor.menuitem: "Globale einstellungen"
+
+#--
+# Flash messages
+#--
+menueditor.flash.saved: "Die Einstellungen wurden gespeichert"
+menueditor.flash.error: "Die Einstellungen konnten nicht gespeichert werden, wir haben sie auf den letzten bekannten guten Zustand wiederhergestellt."
+
+#--
+# Actions
+#--
+menueditor.actions.save: "Einstellungen speichern"

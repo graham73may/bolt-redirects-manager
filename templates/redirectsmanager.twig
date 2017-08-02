@@ -1,0 +1,186 @@
+{% import '@bolt/_macro/_macro.twig' as macro %}
+
+{% extends '@bolt/_base/_page-nav.twig' %}
+
+{% block page_title %}
+    {{ __('redirectsmanager.title') }}
+{% endblock %}
+
+{% block page_nav 'Redirects/Extensions' %}
+
+{% block page_main %}
+    {% set bind_data = {
+    hasGroups: true
+    } %}
+
+    {% set attr_form = {
+    _bind:   ['redirectsmanager', bind_data],
+    class:   'form-horizontal tab-content js-redirectsmanager-form',
+    enctype: 'multipart/form-data',
+    id:      'redirectsmanager',
+    method:  'post',
+    } %}
+
+    <div class="row">
+
+        <div class="col-md-8">
+            {{ include('@bolt/_sub/_messages.twig') }}
+
+            <form{{ macro.attr(attr_form) }}>
+                {{ include('@bolt/_sub/_csrf_token.twig') }}
+                <input type="hidden" name="search" value="{{ search }}">
+                <div class="buic-listing buic-listing--new-redirects" data-bolt-widget="buicListing">
+                    <h3>New redirects</h3><br/>
+                    <table class="table dashboardlisting listing c-redirectsmanager-table js-new-redirects-table">
+                        <thead>
+                        <tr>
+                            <th>Old URL</th>
+                            <th>New URL</th>
+                            <th>Type</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody class="sortable striping_odd ui-sortable">
+                        <tr class="even js-blank-spacer">
+                            <td>
+                                <label class="js-text"></label>
+                                <input class="form-control narrow js-input" type="text" name="old_url[]" value="" title="Old URL to redirect">
+                                <input type="hidden" name="original_old_url[]" value="">
+                            </td>
+                            <td>
+                                <label class="js-text"></label>
+                                <input class="form-control narrow js-input" type="text" name="new_url[]" value="" title="New URL to redirect to">
+                            </td>
+                            <td>
+                                <label class="js-text"></label>
+                                <select name="type[]" class="form-control narrow js-input" title="Redirect status code">
+                                    <option value="301">301</option>
+                                    <option value="302">302</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input class="js-delete" type="hidden" name="delete[]" value="0">
+                                <button class="is-hidden js-button" data-type="edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+                                <button class="is-hidden js-button" data-type="cancel"><i class="fa fa-ban" aria-hidden="true"></i></button>
+                                <button class="is-hidden js-button" data-type="delete"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="buic-listing" data-bolt-widget="buicListing">
+                    <h3>Existing redirects</h3><br/>
+                    <table class="table dashboardlisting listing c-redirectsmanager-table js-redirectsmanager-table">
+                        <thead>
+                        <tr>
+                            <th>Old URL</th>
+                            <th>New URL</th>
+                            <th>Type</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody class="sortable striping_odd ui-sortable">
+                        {% for redirect in redirects.rules %}
+                            <tr class="{{ cycle(['even', 'odd'], loop.index0) }}">
+                                <td>
+                                    <label class="js-text">{{ redirect.old_url }}</label>
+                                    <input class="form-control narrow js-input" type="text" name="old_url[]" value="{{ redirect.old_url }}" title="Old URL to redirect">
+                                    <input type="hidden" name="original_old_url[]" value="{{ redirect.old_url }}">
+                                </td>
+                                <td>
+                                    <label class="js-text">{{ redirect.new_url }}</label>
+                                    <input class="form-control narrow js-input" type="text" name="new_url[]" value="{{ redirect.new_url }}" title="New URL to redirect to">
+                                </td>
+                                <td>
+                                    <label class="js-text">{{ redirect.type }}</label>
+                                    <select name="type[]" class="form-control narrow js-input" title="Redirect status code">
+                                        <option value="301" {{ redirect.type == '301' ? 'selected' }}>301</option>
+                                        <option value="302" {{ redirect.type == '302' ? 'selected' }}>302</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input class="js-delete" type="hidden" name="delete[]" value="0">
+                                    <button class="js-button" data-type="edit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+                                    <button class="is-hidden js-button" data-type="cancel"><i class="fa fa-ban" aria-hidden="true"></i></button>
+                                    <button class="js-button" data-type="delete"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% if total > 1 %}
+                    {% if search is not empty %}
+                        {% set prefix = '?search='~search~'&' %}
+                    {% else %}
+                        {% set prefix = '?' %}
+                    {% endif %}
+                    <div class="pagination pagination-centered {{ class }}">
+                        <ul class="pagination">
+                            {# 'first' and 'prev' #}
+                            {% if page > 1 and class!="narrow" %}
+                                <li><a href="{{ prefix }}page={{ page-1 }}" rel="noindex, follow">&lsaquo; </a></li>
+                            {% endif %}
+                            {% if page > surr+1 %}
+                                <li><a href="{{ prefix }}page={{ 1 }}">&laquo; 1</a></li>
+                            {% endif %}
+
+                            {# start with '..' if there are more than surr+1 before currentpage.. #}
+                            {% if page > surr+2 %}
+                                <li class="disabled"><a>…</a></li>
+                            {% endif %}
+
+                            {% for i in max(1, page-surr)..min(page+surr, total) %}
+                                <li {% if i==page %}class='active'{% endif %}><a href="{{ prefix }}page={{ i }}" {% if i != 1 %}rel="noindex, follow"{% endif %}>{{ i }}</a></li>
+                            {% endfor %}
+
+                            {# end with '..' if there are more than surr+1 after currentpage.. #}
+                            {% if page < (page - surr - 1) %}
+                                <li class="disabled"><a>…</a></li>
+                            {% endif %}
+
+                            {# 'next' and 'last' #}
+                            {% if page < total-surr %}
+                                <li><a href="{{ prefix }}page={{ total }}" rel="noindex, follow">{{ total }} &raquo; </a></li>
+                            {% endif %}
+                            {% if page < total and class!="narrow" %}
+                                <li><a href="{{ prefix }}page={{ page+1 }}" rel="noindex, follow">&rsaquo;</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                {% endif %}
+            </form>
+        </div>
+        <aside class="col-md-4 sidebar">
+            <div class="panel panel-default panel-news">
+                <div class="panel-heading"><i class="fa fa-fw fa-cog"></i> Actions</div>
+
+                <div class="panel-body">
+                    <button type="submit" class="btn btn-primary js-submit-changes" data-content="{{ __('redirectsmanager.actions.save') }}"><i class="fa fa-flag"></i> Save changes</button>
+                    <hr>
+                    <h4><strong>Search for a redirect</strong></h4>
+                    <form class="form-inline" method="get" action="">
+                        <input class="form-control narrow" type="search" name="search" value="{{ search }}" title="Search for a redirect">
+                        <button type="submit" class="btn btn-info"><i class="fa fa-search"></i> Search</button>
+                    </form>
+                    <hr>
+                    <h4><strong>Add new redirect</strong></h4>
+                    <label for="add_old_url">Old URL</label>
+                    <input class="form-control narrow js-add-input" type="text" name="add_old_url" value="" title="Old URL to redirect" data-add-to="old_url[]">
+                    <label style="margin-top: 15px;" for="add_new_url">New URL</label>
+                    <input class="form-control narrow js-add-input" type="text" name="add_new_url" value="" title="New URL to redirect to" data-add-to="new_url[]">
+                    <label style="margin-top: 15px;" for="add_type">Type</label>
+                    <select name="add_type" class="form-control narrow js-add-input" title="Redirect status code" data-add-to="type[]">
+                        <option value="301">301</option>
+                        <option value="302">302</option>
+                    </select>
+                    <button style="margin-top: 15px;" type="submit" class="btn btn-primary js-add-redirect" data-content="{{ __('redirectsmanager.actions.save') }}"><i class="fa fa-plus"></i> Add
+                                                                                                                                                                                                redirect
+                    </button>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+{% endblock %}

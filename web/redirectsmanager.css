@@ -1,0 +1,26 @@
+.buic-listing--new-redirects {
+    margin-bottom : 30px;
+}
+.c-redirectsmanager-table th,
+.c-redirectsmanager-table td {
+    min-width : 100px;
+}
+.c-redirectsmanager-table input,
+.c-redirectsmanager-table select {
+    display : none;
+}
+.c-redirectsmanager-table button {
+    border         : 0 none;
+    display        : inline-block;
+    vertical-align : middle;
+}
+.c-redirectsmanager-table .is-hidden {
+    display : none;
+}
+#redirectsmanager input:invalid,
+#redirectsmanager select:invalid {
+    background : #EF5350;
+}
+.form-control.narrow {
+    max-width : 265px;
+}

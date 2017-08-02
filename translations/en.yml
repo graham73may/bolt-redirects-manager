@@ -1,0 +1,18 @@
+#--
+# Auth/permissions/menuitem/title
+#--
+redirectsmanager.notallowed: "Logged in user does not have the correct rights to use this route."
+redirectsmanager.title: "Redirects manager"
+redirectsmanager.menuitem: "Redirects manager"
+
+#--
+# Flash messages
+#--
+redirectsmanager.flash.saved: "The redirects have been saved"
+redirectsmanager.flash.error: "Redirects couldn\'t be saved, we have restored it to it\'s last known good state."
+
+#--
+# Actions
+#--
+redirectsmanager.actions.save: "Save redirects"
+

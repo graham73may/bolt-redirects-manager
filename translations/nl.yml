@@ -1,0 +1,17 @@
+#--
+# Auth/permissions/menuitem/title
+#--
+menueditor.notallowed: "Aangemelde gebruiker heeft niet de juiste rechten om deze route te gebruiken."
+menueditor.title: "Algemene instellingen"
+menueditor.menuitem: "Algemene instellingen"
+
+#--
+# Flash messages
+#--
+menueditor.flash.saved: "De instellingen zijn opgeslagen"
+menueditor.flash.error: "Instellingen kon niet worden opgeslagen, hebben we hersteld tot het is de laatst bekende goede staat."
+
+#--
+# Actions
+#--
+menueditor.actions.save: "Instellingen opslaan"

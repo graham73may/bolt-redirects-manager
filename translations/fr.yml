@@ -1,0 +1,17 @@
+#--
+# Auth/permissions/menuitem/title
+#--
+menueditor.notallowed: "L\'utilisateur connecté ne dispose pas des droits corrects pour utiliser cette route."
+menueditor.title: "Paramètres globaux"
+menueditor.menuitem: "Paramètres globaux"
+
+#--
+# Flash messages
+#--
+menueditor.flash.saved: "Les paramètres ont été enregistrés"
+menueditor.flash.error: "Les paramètres n\'ont pas pu être enregistrés, nous l\'avons restauré à son dernier état connu."
+
+#--
+# Actions
+#--
+menueditor.actions.save: "Enregistrer les paramètres"
