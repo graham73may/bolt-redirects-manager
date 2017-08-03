@@ -8,14 +8,54 @@ If your install is not setup to use a `/public` folder this extension will **NOT
 
 ## Requirements
 
-You **MUST** be running an apache server with mod_rewrite enabled.
+1. You **MUST** be running an apache server with `mod_rewrite` enabled.
 
-You site's webroot **MUST** be within a `/public` folder
+1. You site's webroot **MUST** be within a `/public` folder
+
+1. You **MUST** add `tivie/htaccess-parser` to your project root `composer.json`. For example:
+
+```
+{
+    "name": "bolt/composer-install",
+    "description": "Sophisticated, lightweight & simple CMS",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": "^5.5.9 || ^7.0",
+        "bolt/bolt": "^3.3",
+        "passwordlib/passwordlib": "^1.0@beta"
+        "tivie/htaccess-parser": "*"
+    },
+    "minimum-stability": "beta",
+    "prefer-stable": true,
+    "scripts": {
+        "post-install-cmd": [
+            "Bolt\\Composer\\ScriptHandler::installAssets"
+        ],
+        "post-update-cmd": [
+            "Bolt\\Composer\\ScriptHandler::updateProject",
+            "Bolt\\Composer\\ScriptHandler::installAssets"
+        ],
+        "post-create-project-cmd": [
+            "Bolt\\Composer\\ScriptHandler::configureProject",
+            "Bolt\\Composer\\ScriptHandler::installThemesAndFiles",
+            "nut extensions:setup"
+        ]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-3.3" : "3.3.x-dev"
+        }
+    }
+}
+
+
+```
 
 ## Usage
 
-Your `/public/.htaccess` file needs to contain this block: 
-
+Your `/public/.htaccess` file needs to contain a `### Redirects Manager block` as in the below example. This extension will save redirects in the `### Redirects Manager block` section of the file.
+                                                                                                        
 ```
 <IfModule mod_rewrite.c>
     RewriteEngine on
@@ -37,4 +77,4 @@ Your `/public/.htaccess` file needs to contain this block:
 </IfModule>
 ```
 
-This extension will save redirects in the `### Redirects Manager block` section of the file.
+*Note: There is currently a bug where this is only working if the `### Redirects Manager block` is inside a `<IfModule mod_rewrite.c>` block.*
