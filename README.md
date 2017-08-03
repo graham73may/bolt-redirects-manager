@@ -1,4 +1,4 @@
-# Bolt Redirect Manager
+# Bolt Redirects Manager
 
 This extension adds a GUI redirects manager to Bolt's admin area. 
 
