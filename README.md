@@ -77,4 +77,4 @@ Your `/public/.htaccess` file needs to contain a `### Redirects Manager block` a
 </IfModule>
 ```
 
-*Note: There is currently a bug where this is only working if the `### Redirects Manager block` is inside a `<IfModule mod_rewrite.c>` block.*
+*Note: There is currently a bug where this is only working if the `### Redirects Manager block` is inside another block such as `<IfModule mod_rewrite.c>` (i.e. it only works when it's a child of something else).*
