@@ -4,7 +4,7 @@ This extension adds a GUI redirects manager to Bolt's admin area.
 
 This extension writes to the sites `/public/.htaccess` file. 
 
-If your install is not setup to use a `/public` folder this extension will **NOT** work for you. 
+If your install is not set up to use a `/public` folder this extension will **NOT** work for you. 
 
 ## Requirements
 
